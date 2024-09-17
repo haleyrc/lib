@@ -1,33 +1,44 @@
-// Package hash provides simple utilities for working with hashing algorithms.
+// Package hash provides functions for computing and comparing one-way hashes.
 package hash
 
 import (
 	"fmt"
+	"log/slog"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Check returns an error if the provided hash is not the hash of the provided
-// guess or nil otherwise. The comparison is guaranteed to be constant time.
-func Check(guess, hash string) error {
-	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(guess)); err != nil {
-		return fmt.Errorf("check failed: %w", err)
+// Hash represents a one-way hash of a string value.
+type Hash struct {
+	value []byte
+}
+
+// New returns a one-way hash of s.
+func New(s string) Hash {
+	hashBytes, err := bcrypt.GenerateFromPassword([]byte(s), bcrypt.DefaultCost)
+	if err != nil {
+		// This can only fail in really arcane ways that we have no suitable way of
+		// recovering from, so we just panic here rather than trying to handle the
+		// error.
+		panic(err)
+	}
+
+	hash := Hash{
+		value: hashBytes,
+	}
+
+	return hash
+}
+
+// Compare compares o with the hashed value in h and returns an error if the
+// values don't match.
+func (h Hash) Compare(o string) error {
+	if err := bcrypt.CompareHashAndPassword(h.value, []byte(o)); err != nil {
+		return fmt.Errorf("hash: compare: hash mismatch: %w", err)
 	}
 	return nil
 }
 
-// Generate returns a hashed version of the provided string. This function
-// panics if there is an error, since there's not much that can be done and it
-// simplifies the API significantly.
-func Generate(s string) string {
-	hash, err := bcrypt.GenerateFromPassword([]byte(s), bcrypt.DefaultCost)
-	if err != nil {
-		// I'm panicking here because I don't think there's any way for this to
-		// error that shouldn't immediately cause a page. I've never seen it happen
-		// and I think it's just for interface satisfaction, so I feel safe here.
-		// Plus, it's not a recoverable error. The user can't fix a broken hashing
-		// algorithm.
-		panic(err)
-	}
-	return string(hash)
+func (h Hash) LogValue() slog.Value {
+	return slog.StringValue("SECRET")
 }
