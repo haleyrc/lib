@@ -24,6 +24,11 @@ func New(port string, h http.Handler) Server {
 	}
 }
 
+// Addr returns the full address that the server is configured to listen on.
+func (s Server) Addr() string {
+	return s.s.Addr
+}
+
 // ListenAndServe listens for connections on interface 0.0.0.0 at the port
 // provided to New. If the provided context is canceled, the server will attempt
 // to gracefully shutdown. The returned error will only be non-nil if the server
