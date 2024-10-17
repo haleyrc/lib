@@ -3,7 +3,7 @@ package hash_test
 import (
 	"testing"
 
-	"github.com/haleyrc/lib/assert"
+	"github.com/haleyrc/assert"
 	"github.com/haleyrc/lib/hash"
 )
 
