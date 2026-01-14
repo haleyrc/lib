@@ -1,0 +1,7 @@
+name: "Test"
+
+on: [push, workflow_dispatch]
+
+jobs:
+  test:
+    uses: haleyrc/actions/.github/workflows/go-test.yml@main
