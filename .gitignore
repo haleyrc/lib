@@ -1,2 +1,10 @@
 .env
 dist/
+
+# Temporary
+c4/
+ergdata/
+feed/
+http/
+hue/
+steam/
