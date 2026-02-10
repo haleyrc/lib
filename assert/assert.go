@@ -193,6 +193,16 @@ func StatusCode(t T, want int, resp *http.Response) Result {
 	return Result{t: t, failed: false}
 }
 
+// StringContains validates that the substring exists in the parent string.
+func StringContains(t T, label string, s, sub string) Result {
+	t.Helper()
+	if !strings.Contains(s, sub) {
+		t.Errorf("Expected %s to contain %q, but it didn't.", label, sub)
+		return Result{t: t, failed: true}
+	}
+	return Result{t: t, failed: false}
+}
+
 // True validates that the provided value is true.
 func True(t T, label string, got bool) Result {
 	t.Helper()
