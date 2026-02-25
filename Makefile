@@ -6,7 +6,7 @@ fmt:
 	gofmt -s -w .
 
 release:
-	goreleaser release --clean
+	source ./.env && goreleaser release --clean
 
 test:
 	go test -v -count=1 -shuffle=on ./...
